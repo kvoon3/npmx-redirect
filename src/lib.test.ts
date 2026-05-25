@@ -138,11 +138,7 @@ describe("handleRedirect", () => {
         describe("GitHub pull request URLs", () => {
             it("should redirect changes pages to Diffshub by default", async () => {
                 const settings = createSettings();
-                await handleRedirect(
-                    settings,
-                    "https://github.com/org/repo/pull/123/changes",
-                    mockRedirectCallback,
-                );
+                await handleRedirect(settings, "https://github.com/org/repo/pull/123/changes", mockRedirectCallback);
                 expect(mockRedirectCallback).toHaveBeenCalledWith("https://diffshub.com/org/repo/pull/123");
             });
 
@@ -172,17 +168,71 @@ describe("handleRedirect", () => {
 
             it("should not redirect GitHub pull requests when GitHub redirects are disabled", async () => {
                 const settings = createSettings({ github: false });
-                await handleRedirect(
-                    settings,
-                    "https://github.com/org/repo/pull/123/changes",
-                    mockRedirectCallback,
-                );
+                await handleRedirect(settings, "https://github.com/org/repo/pull/123/changes", mockRedirectCallback);
                 expect(mockRedirectCallback).not.toHaveBeenCalled();
             });
 
             it("should not redirect other GitHub pull request subpages", async () => {
                 const settings = createSettings({ githubChangesOnly: false });
                 await handleRedirect(settings, "https://github.com/org/repo/pull/123/files", mockRedirectCallback);
+                expect(mockRedirectCallback).not.toHaveBeenCalled();
+            });
+        });
+
+        describe("GitHub commit URLs", () => {
+            it("should redirect commit pages to Diffshub", async () => {
+                const settings = createSettings();
+                await handleRedirect(
+                    settings,
+                    "https://github.com/kvoon3/npmx-redirect/commit/a4f59a854dfe6721c3e6f48dba5bd5114b2404bf",
+                    mockRedirectCallback,
+                );
+                expect(mockRedirectCallback).toHaveBeenCalledWith(
+                    "https://diffshub.com/kvoon3/npmx-redirect/commit/a4f59a854dfe6721c3e6f48dba5bd5114b2404bf",
+                );
+            });
+
+            it("should redirect commit pages when changes-only is enabled", async () => {
+                const settings = createSettings({ githubChangesOnly: true });
+                await handleRedirect(
+                    settings,
+                    "https://github.com/org/repo/commit/a4f59a854dfe6721c3e6f48dba5bd5114b2404bf",
+                    mockRedirectCallback,
+                );
+                expect(mockRedirectCallback).toHaveBeenCalledWith(
+                    "https://diffshub.com/org/repo/commit/a4f59a854dfe6721c3e6f48dba5bd5114b2404bf",
+                );
+            });
+
+            it("should preserve query parameters and hash fragments", async () => {
+                const settings = createSettings();
+                await handleRedirect(
+                    settings,
+                    "https://github.com/org/repo/commit/a4f59a8?w=1#diff-1",
+                    mockRedirectCallback,
+                );
+                expect(mockRedirectCallback).toHaveBeenCalledWith(
+                    "https://diffshub.com/org/repo/commit/a4f59a8?w=1#diff-1",
+                );
+            });
+
+            it("should not redirect GitHub commits when GitHub redirects are disabled", async () => {
+                const settings = createSettings({ github: false });
+                await handleRedirect(
+                    settings,
+                    "https://github.com/org/repo/commit/a4f59a854dfe6721c3e6f48dba5bd5114b2404bf",
+                    mockRedirectCallback,
+                );
+                expect(mockRedirectCallback).not.toHaveBeenCalled();
+            });
+
+            it("should not redirect commit subpages", async () => {
+                const settings = createSettings();
+                await handleRedirect(
+                    settings,
+                    "https://github.com/org/repo/commit/a4f59a854dfe6721c3e6f48dba5bd5114b2404bf/checks",
+                    mockRedirectCallback,
+                );
                 expect(mockRedirectCallback).not.toHaveBeenCalled();
             });
         });
