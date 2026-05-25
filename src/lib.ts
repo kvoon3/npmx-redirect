@@ -5,7 +5,7 @@ const urlPatterns = {
     packages: /^\/package\/.*$/,
     search: /^\/search$/,
     users: /^\/~.*$/,
-} satisfies Record<Exclude<SettingKeys, "enabled" | "github" | "githubChangesOnly">, RegExp>;
+} satisfies Record<Exclude<SettingKeys, "enabled" | "githubPull" | "githubCommit">, RegExp>;
 
 const githubPullPattern = /^\/([^/]+)\/([^/]+)\/pull\/(\d+)(?:\/(changes))?\/?$/;
 const githubCommitPattern = /^\/([^/]+)\/([^/]+)\/commit\/([^/]+)\/?$/;
@@ -19,9 +19,9 @@ const createRedirectUrl = (url: URL, settings: Settings) => {
         }
     }
 
-    if (/(^|\.)github\.com$/.test(url.hostname) && settings.github) {
+    if (/(^|\.)github\.com$/.test(url.hostname)) {
         const commitMatch = url.pathname.match(githubCommitPattern);
-        if (commitMatch) {
+        if (commitMatch && settings.githubCommit) {
             const [, org, repo, commitHash] = commitMatch;
             return `https://diffshub.com/${org}/${repo}/commit/${commitHash}${url.search}${url.hash}`;
         }
@@ -29,7 +29,7 @@ const createRedirectUrl = (url: URL, settings: Settings) => {
         const match = url.pathname.match(githubPullPattern);
         if (!match) return;
         const [, org, repo, pullNumber, page] = match;
-        if (settings.githubChangesOnly && page !== "changes") return;
+        if (!settings.githubPull || page !== "changes") return;
 
         return `https://diffshub.com/${org}/${repo}/pull/${pullNumber}${url.search}${url.hash}`;
     }

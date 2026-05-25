@@ -48,7 +48,7 @@ function IndexPopup() {
 
                 <div className={`transition-opacity ${!settings.enabled ? "opacity-50 pointer-events-none" : ""}`}>
                     <div className="pt-3 pb-1 text-[11px] font-semibold uppercase text-zinc-500 tracking-wide">
-                        npmx
+                        NPMX
                     </div>
 
                     <div className="flex items-center justify-between gap-4 py-3">
@@ -136,25 +136,27 @@ function IndexPopup() {
                     </div>
 
                     <div className="pt-4 pb-1 text-[11px] font-semibold uppercase text-zinc-500 tracking-wide">
-                        diffshub
+                        Diffshub
                     </div>
 
                     <div className="flex items-center justify-between gap-4 py-3">
                         <div className="flex-1 flex flex-col gap-0.5">
-                            <span className="font-medium text-zinc-50 text-sm">GitHub Pull Requests</span>
-                            <span className="text-xs text-zinc-400">Redirect GitHub PRs to Diffshub</span>
+                            <span className="font-medium text-zinc-50 text-sm">Pull</span>
+                            <span className="text-xs text-zinc-400">Redirect /pull/*/changes pages</span>
                         </div>
                         <button
                             className={`relative w-11 h-6 rounded-full flex-shrink-0 transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
-                                settings.github ? "bg-[#cb3837] hover:bg-[#e53e3e]" : "bg-zinc-700 hover:bg-zinc-600"
+                                settings.githubPull
+                                    ? "bg-[#cb3837] hover:bg-[#e53e3e]"
+                                    : "bg-zinc-700 hover:bg-zinc-600"
                             }`}
-                            onClick={() => handleToggle("github")}
+                            onClick={() => handleToggle("githubPull")}
                             disabled={!settings.enabled}
-                            aria-label="Toggle GitHub pull request redirects"
+                            aria-label="Toggle GitHub pull redirects"
                         >
                             <span
                                 className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-[0_2px_4px_rgba(0,0,0,0.3)] transition-transform ${
-                                    settings.github ? "translate-x-5" : ""
+                                    settings.githubPull ? "translate-x-5" : ""
                                 }`}
                             />
                         </button>
@@ -162,22 +164,22 @@ function IndexPopup() {
 
                     <div className="flex items-center justify-between gap-4 py-3">
                         <div className="flex-1 flex flex-col gap-0.5">
-                            <span className="font-medium text-zinc-50 text-sm">Changes Only</span>
-                            <span className="text-xs text-zinc-400">Only redirect /pull/*/changes pages</span>
+                            <span className="font-medium text-zinc-50 text-sm">Commit</span>
+                            <span className="text-xs text-zinc-400">Redirect /commit/* pages</span>
                         </div>
                         <button
                             className={`relative w-11 h-6 rounded-full flex-shrink-0 transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
-                                settings.githubChangesOnly
+                                settings.githubCommit
                                     ? "bg-[#cb3837] hover:bg-[#e53e3e]"
                                     : "bg-zinc-700 hover:bg-zinc-600"
                             }`}
-                            onClick={() => handleToggle("githubChangesOnly")}
-                            disabled={!settings.enabled || !settings.github}
-                            aria-label="Toggle GitHub changes-only redirects"
+                            onClick={() => handleToggle("githubCommit")}
+                            disabled={!settings.enabled}
+                            aria-label="Toggle GitHub commit redirects"
                         >
                             <span
                                 className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-[0_2px_4px_rgba(0,0,0,0.3)] transition-transform ${
-                                    settings.githubChangesOnly ? "translate-x-5" : ""
+                                    settings.githubCommit ? "translate-x-5" : ""
                                 }`}
                             />
                         </button>

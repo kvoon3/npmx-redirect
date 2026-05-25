@@ -77,14 +77,14 @@
                     "path": "~/rules/users.json"
                 },
                 {
-                    "id": "github",
-                    "enabled": false,
-                    "path": "~/rules/github.json"
+                    "id": "githubPull",
+                    "enabled": true,
+                    "path": "~/rules/githubPull.json"
                 },
                 {
-                    "id": "githubChanges",
+                    "id": "githubCommit",
                     "enabled": true,
-                    "path": "~/rules/githubChanges.json"
+                    "path": "~/rules/githubCommit.json"
                 }
             ]
         },
