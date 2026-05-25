@@ -16,6 +16,7 @@ const DEFAULT_SETTINGS = {
     users: true,
     orgs: true,
     githubPull: true,
+    githubCompare: true,
     githubCommit: true,
 };
 export type Settings = typeof DEFAULT_SETTINGS;
@@ -37,7 +38,8 @@ export const getSettings = async () => {
 
 const handleRulesetUpdates = async (settings: Settings) => {
     const ruleSettings = Object.entries(settings).filter(
-        ([ruleId]) => ruleId !== "enabled" && ruleId !== "githubPull" && ruleId !== "githubCommit",
+        ([ruleId]) =>
+            ruleId !== "enabled" && ruleId !== "githubPull" && ruleId !== "githubCompare" && ruleId !== "githubCommit",
     );
     const { enableRulesetIds, disableRulesetIds } = ruleSettings.reduce(
         (acc, [ruleId, enabled]) => {
@@ -53,7 +55,7 @@ const handleRulesetUpdates = async (settings: Settings) => {
         { disableRulesetIds: [], enableRulesetIds: [] },
     );
 
-    for (const ruleId of ["githubPull", "githubCommit"] as const) {
+    for (const ruleId of ["githubPull", "githubCompare", "githubCommit"] as const) {
         if (settings.enabled && settings[ruleId]) enableRulesetIds.push(ruleId);
         else disableRulesetIds.push(ruleId);
     }
