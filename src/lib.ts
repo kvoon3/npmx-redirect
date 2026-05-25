@@ -8,6 +8,7 @@ const urlPatterns = {
 } satisfies Record<Exclude<SettingKeys, "enabled" | "github" | "githubChangesOnly">, RegExp>;
 
 const githubPullPattern = /^\/([^/]+)\/([^/]+)\/pull\/(\d+)(?:\/(changes))?\/?$/;
+const githubCommitPattern = /^\/([^/]+)\/([^/]+)\/commit\/([^/]+)\/?$/;
 
 const createRedirectUrl = (url: URL, settings: Settings) => {
     if (/(^|\.)npmjs\.com$/.test(url.hostname)) {
@@ -19,9 +20,14 @@ const createRedirectUrl = (url: URL, settings: Settings) => {
     }
 
     if (/(^|\.)github\.com$/.test(url.hostname) && settings.github) {
+        const commitMatch = url.pathname.match(githubCommitPattern);
+        if (commitMatch) {
+            const [, org, repo, commitHash] = commitMatch;
+            return `https://diffshub.com/${org}/${repo}/commit/${commitHash}${url.search}${url.hash}`;
+        }
+
         const match = url.pathname.match(githubPullPattern);
         if (!match) return;
-
         const [, org, repo, pullNumber, page] = match;
         if (settings.githubChangesOnly && page !== "changes") return;
 

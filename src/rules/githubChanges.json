@@ -12,5 +12,19 @@
             "regexFilter": "^https?://(?:www\\.)?github\\.com/([^/]+)/([^/]+)/pull/(\\d+)/changes/?([?#].*)?$",
             "resourceTypes": ["main_frame"]
         }
+    },
+    {
+        "id": 2,
+        "priority": 1,
+        "action": {
+            "type": "redirect",
+            "redirect": {
+                "regexSubstitution": "https://diffshub.com/\\1/\\2/commit/\\3\\4"
+            }
+        },
+        "condition": {
+            "regexFilter": "^https?://(?:www\\.)?github\\.com/([^/]+)/([^/]+)/commit/([^/?#]+)/?([?#].*)?$",
+            "resourceTypes": ["main_frame"]
+        }
     }
 ]
