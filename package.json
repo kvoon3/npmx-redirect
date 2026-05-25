@@ -47,7 +47,8 @@
     "packageManager": "pnpm@10.33.4",
     "manifest": {
         "host_permissions": [
-            "*://*.npmjs.com/*"
+            "*://*.npmjs.com/*",
+            "*://*.github.com/*"
         ],
         "permissions": [
             "storage",
@@ -78,6 +79,16 @@
                     "id": "users",
                     "enabled": true,
                     "path": "~/rules/users.json"
+                },
+                {
+                    "id": "github",
+                    "enabled": false,
+                    "path": "~/rules/github.json"
+                },
+                {
+                    "id": "githubChanges",
+                    "enabled": true,
+                    "path": "~/rules/githubChanges.json"
                 }
             ]
         },

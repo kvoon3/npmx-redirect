@@ -1,0 +1,16 @@
+[
+    {
+        "id": 1,
+        "priority": 1,
+        "action": {
+            "type": "redirect",
+            "redirect": {
+                "regexSubstitution": "https://diffshub.com/\\1/\\2/pull/\\3\\4"
+            }
+        },
+        "condition": {
+            "regexFilter": "^https?://(?:www\\.)?github\\.com/([^/]+)/([^/]+)/pull/(\\d+)/?([?#].*)?$",
+            "resourceTypes": ["main_frame"]
+        }
+    }
+]
