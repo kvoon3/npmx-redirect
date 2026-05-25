@@ -17,6 +17,7 @@ describe("handleRedirect", () => {
             users: true,
             orgs: true,
             githubPull: true,
+            githubCompare: true,
             githubCommit: true,
             ...overrides,
         });
@@ -169,6 +170,28 @@ describe("handleRedirect", () => {
             it("should not redirect other GitHub pull request subpages", async () => {
                 const settings = createSettings({ githubPull: false });
                 await handleRedirect(settings, "https://github.com/org/repo/pull/123/files", mockRedirectCallback);
+                expect(mockRedirectCallback).not.toHaveBeenCalled();
+            });
+
+            it("should redirect compare pages to Diffshub", async () => {
+                const settings = createSettings();
+                await handleRedirect(
+                    settings,
+                    "https://github.com/T3-Content/unduck/compare/main...kvoon3:oduck:main#files_bucket",
+                    mockRedirectCallback,
+                );
+                expect(mockRedirectCallback).toHaveBeenCalledWith(
+                    "https://diffshub.com/T3-Content/unduck/compare/main...kvoon3:oduck:main#files_bucket",
+                );
+            });
+
+            it("should not redirect compare pages when compare redirects are disabled", async () => {
+                const settings = createSettings({ githubCompare: false });
+                await handleRedirect(
+                    settings,
+                    "https://github.com/T3-Content/unduck/compare/main...kvoon3:oduck:main#files_bucket",
+                    mockRedirectCallback,
+                );
                 expect(mockRedirectCallback).not.toHaveBeenCalled();
             });
         });

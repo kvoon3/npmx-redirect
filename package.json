@@ -82,6 +82,11 @@
                     "path": "~/rules/githubPull.json"
                 },
                 {
+                    "id": "githubCompare",
+                    "enabled": true,
+                    "path": "~/rules/githubCompare.json"
+                },
+                {
                     "id": "githubCommit",
                     "enabled": true,
                     "path": "~/rules/githubCommit.json"

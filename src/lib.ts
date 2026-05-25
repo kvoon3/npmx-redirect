@@ -5,9 +5,10 @@ const urlPatterns = {
     packages: /^\/package\/.*$/,
     search: /^\/search$/,
     users: /^\/~.*$/,
-} satisfies Record<Exclude<SettingKeys, "enabled" | "githubPull" | "githubCommit">, RegExp>;
+} satisfies Record<Exclude<SettingKeys, "enabled" | "githubPull" | "githubCompare" | "githubCommit">, RegExp>;
 
 const githubPullPattern = /^\/([^/]+)\/([^/]+)\/pull\/(\d+)(?:\/(changes))?\/?$/;
+const githubComparePattern = /^\/([^/]+)\/([^/]+)\/compare\/([^/]+)\/?$/;
 const githubCommitPattern = /^\/([^/]+)\/([^/]+)\/commit\/([^/]+)\/?$/;
 
 const createRedirectUrl = (url: URL, settings: Settings) => {
@@ -24,6 +25,12 @@ const createRedirectUrl = (url: URL, settings: Settings) => {
         if (commitMatch && settings.githubCommit) {
             const [, org, repo, commitHash] = commitMatch;
             return `https://diffshub.com/${org}/${repo}/commit/${commitHash}${url.search}${url.hash}`;
+        }
+
+        const compareMatch = url.pathname.match(githubComparePattern);
+        if (compareMatch && settings.githubCompare) {
+            const [, org, repo, compare] = compareMatch;
+            return `https://diffshub.com/${org}/${repo}/compare/${compare}${url.search}${url.hash}`;
         }
 
         const match = url.pathname.match(githubPullPattern);
