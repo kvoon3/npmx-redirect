@@ -4,7 +4,7 @@ import { handleRedirect } from "./lib";
 import { getSettings } from "./settings";
 
 export const config: PlasmoCSConfig = {
-    matches: ["*://*.npmjs.com/*"],
+    matches: ["*://*.npmjs.com/*", "*://*.github.com/*"],
     run_at: "document_start",
 };
 

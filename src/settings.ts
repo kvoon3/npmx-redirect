@@ -15,6 +15,8 @@ const DEFAULT_SETTINGS = {
     search: true,
     users: true,
     orgs: true,
+    github: true,
+    githubChangesOnly: true,
 };
 export type Settings = typeof DEFAULT_SETTINGS;
 export type SettingKeys = keyof typeof DEFAULT_SETTINGS;
@@ -34,10 +36,11 @@ export const getSettings = async () => {
 };
 
 const handleRulesetUpdates = async (settings: Settings) => {
-    const { enableRulesetIds, disableRulesetIds } = Object.entries(settings).reduce(
+    const ruleSettings = Object.entries(settings).filter(
+        ([ruleId]) => ruleId !== "enabled" && ruleId !== "githubChangesOnly" && ruleId !== "github",
+    );
+    const { enableRulesetIds, disableRulesetIds } = ruleSettings.reduce(
         (acc, [ruleId, enabled]) => {
-            // enabled is global, doesnt have a ruleset
-            if (ruleId === "enabled") return acc;
             // if global toggle is disabled, disable all rules
             if (!settings.enabled) {
                 acc.disableRulesetIds.push(ruleId);
@@ -49,6 +52,16 @@ const handleRulesetUpdates = async (settings: Settings) => {
         },
         { disableRulesetIds: [], enableRulesetIds: [] },
     );
+
+    if (!settings.enabled || !settings.github) {
+        disableRulesetIds.push("github", "githubChanges");
+    } else if (settings.githubChangesOnly) {
+        enableRulesetIds.push("githubChanges");
+        disableRulesetIds.push("github");
+    } else {
+        enableRulesetIds.push("github");
+        disableRulesetIds.push("githubChanges");
+    }
 
     await Promise.all([
         browser.declarativeNetRequest.updateEnabledRulesets({
