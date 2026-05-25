@@ -57,8 +57,8 @@ describe("handleRedirect", () => {
             search: true,
             users: true,
             orgs: true,
-            github: true,
-            githubChangesOnly: true,
+            githubPull: true,
+            githubCommit: true,
             ...overrides,
         });
     };
@@ -195,26 +195,20 @@ describe("handleRedirect", () => {
                 );
             });
 
-            it("should not redirect pull request root pages when changes-only is enabled", async () => {
-                const settings = createSettings({ githubChangesOnly: true });
+            it("should not redirect pull request root pages", async () => {
+                const settings = createSettings({ githubPull: true });
                 await handleRedirect(settings, "https://github.com/org/repo/pull/123", mockRedirectCallback);
                 expect(mockRedirectCallback).not.toHaveBeenCalled();
             });
 
-            it("should redirect pull request root pages when changes-only is disabled", async () => {
-                const settings = createSettings({ githubChangesOnly: false });
-                await handleRedirect(settings, "https://github.com/org/repo/pull/123", mockRedirectCallback);
-                expect(mockRedirectCallback).toHaveBeenCalledWith("https://diffshub.com/org/repo/pull/123");
-            });
-
-            it("should not redirect GitHub pull requests when GitHub redirects are disabled", async () => {
-                const settings = createSettings({ github: false });
+            it("should not redirect pull request changes pages when pull redirects are disabled", async () => {
+                const settings = createSettings({ githubPull: false });
                 await handleRedirect(settings, "https://github.com/org/repo/pull/123/changes", mockRedirectCallback);
                 expect(mockRedirectCallback).not.toHaveBeenCalled();
             });
 
             it("should not redirect other GitHub pull request subpages", async () => {
-                const settings = createSettings({ githubChangesOnly: false });
+                const settings = createSettings({ githubPull: false });
                 await handleRedirect(settings, "https://github.com/org/repo/pull/123/files", mockRedirectCallback);
                 expect(mockRedirectCallback).not.toHaveBeenCalled();
             });
@@ -233,8 +227,20 @@ describe("handleRedirect", () => {
                 );
             });
 
-            it("should redirect commit pages when changes-only is enabled", async () => {
-                const settings = createSettings({ githubChangesOnly: true });
+            it("should redirect commit pages when pull redirects are disabled", async () => {
+                const settings = createSettings({ githubPull: false });
+                await handleRedirect(
+                    settings,
+                    "https://github.com/org/repo/commit/a4f59a854dfe6721c3e6f48dba5bd5114b2404bf",
+                    mockRedirectCallback,
+                );
+                expect(mockRedirectCallback).toHaveBeenCalledWith(
+                    "https://diffshub.com/org/repo/commit/a4f59a854dfe6721c3e6f48dba5bd5114b2404bf",
+                );
+            });
+
+            it("should redirect commit pages when pull redirects are enabled", async () => {
+                const settings = createSettings({ githubPull: true });
                 await handleRedirect(
                     settings,
                     "https://github.com/org/repo/commit/a4f59a854dfe6721c3e6f48dba5bd5114b2404bf",
@@ -257,8 +263,8 @@ describe("handleRedirect", () => {
                 );
             });
 
-            it("should not redirect GitHub commits when GitHub redirects are disabled", async () => {
-                const settings = createSettings({ github: false });
+            it("should not redirect GitHub commits when commit redirects are disabled", async () => {
+                const settings = createSettings({ githubCommit: false });
                 await handleRedirect(
                     settings,
                     "https://github.com/org/repo/commit/a4f59a854dfe6721c3e6f48dba5bd5114b2404bf",
@@ -285,7 +291,8 @@ describe("handleRedirect", () => {
                     orgs: false,
                     search: true,
                     users: false,
-                    github: false,
+                    githubPull: false,
+                    githubCommit: false,
                 });
 
                 // Should redirect packages
@@ -314,7 +321,8 @@ describe("handleRedirect", () => {
                     orgs: false,
                     search: false,
                     users: false,
-                    github: false,
+                    githubPull: false,
+                    githubCommit: false,
                 });
 
                 await handleRedirect(settings, "https://npmjs.com/package/react", mockRedirectCallback);
